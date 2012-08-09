@@ -1,36 +1,48 @@
-$j = jQuery;
+$(function () {
 
-$j(function () {
+            checkAddRem();
 
-            $j('#add_pmr').click(function() {
+            $('#add_pmr').live('click', function(e) {
 
-                var num     = $j('.pm_info').length;
+                e.preventDefault();
+
+                num     = $('.pm_info').length - 1;
 
                 var newNum  = new Number(num + 1);
 
-                var newElem = $j('#pm_info' + num).clone().attr('id', 'pm_info' + newNum);
+                var newElem = $('#pm_info' + num).clone().attr('id', 'pm_info' + newNum);
 
                 newElem.children('#meta_key'+num).attr('id', 'meta_key' + newNum).attr('name', 'meta_key[]').val(null);
 
                 newElem.children('#displayname'+num).attr('id', 'displayname' + newNum).attr('name', 'displayname[]').val(null);
 
-                $j('#pm_info' + num).after(newElem);
+                $('#pm_info' + num).after(newElem);
 
-                $j('#rem_pmr').removeAttr('disabled');
+                $('#rem_pmr').removeAttr('disabled');
 
             });
 
-            $j('#rem_pmr').click(function() {
+            $('#rem_pmr').live('click', function(e) {
 
-                var num = $j('.pm_info').length;
+                e.preventDefault();
 
-                $j('#pm_info' + num).remove();
+                num = $('.pm_info').length - 1;
 
-                $j('#add_pmr').removeAttr('disabled');
+                $('#pm_info' + num).remove();
 
-                if (num-1 == 1)
-                    $j('#rem_pmr').attr('disabled','disabled');
+                $('#add_pmr').removeAttr('disabled');
+
+                if (num == 1)
+                    $('#rem_pmr').attr('disabled','disabled');
             });
 });
 
 
+var checkAddRem = function() {
+    var num = $('.pm_info').length;
+    console.log(num);
+    if (num <= 1)
+        $('#rem_pmr').attr('disabled','disabled');
+    else
+        $('#rem_pmr').removeAttr('disabled');
+}

@@ -1,0 +1,34 @@
+#labeling td {
+    text-align: center;
+    font-weight: bold;
+}
+
+#pm_buttons td {
+    text-align: center;
+}
+
+#supra_csv_ingestion_mapper {
+    width: 50%;
+    float: left;
+}
+
+#supra_csv_mapping_preset {
+    width: 50%;
+    float: left;
+}
+
+.clear {
+    clear: both;
+}
+
+#flash {
+    font-weight: bold;
+}
+
+span.success {
+    color: green;
+}
+
+span.error {
+    color: red;
+}
