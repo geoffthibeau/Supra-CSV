@@ -7,6 +7,7 @@ class RemotePost extends SupraCsvPlugin {
     private $uname;
     private $pass;
     private $postId;
+    private $debugging;
 
     function __construct() {
         parent::__construct();
@@ -15,6 +16,8 @@ class RemotePost extends SupraCsvPlugin {
         $this->setUser();       
         $pingback = $this->getPluginDirUrl() . "/xmlrpc/supra_xmlrpc.php";
         $this->client = new IXR_Client($pingback);
+        $this->debugging = get_option('scsv_ingest_debugger');
+        $this->client->debug = $this->debugging;;
     }
 
     private function setUser() {
@@ -31,12 +34,15 @@ class RemotePost extends SupraCsvPlugin {
 
         $default_args = array(
                               'post_id'=>null,
-                              'publish'=>true,
+                              'publish'=>$post['publish'],
                              );
 
         $args = array_merge($default_args, $args);
 
-        if($args['function'] == "metaWeblog.newPost") {
+        if($this->debugging)
+            Debug::show($args);
+
+        if($args['function'] == "wp.newPost") {
             if(!$this->client->query($args['function'],$args['post_id'],$this->uname,$this->pass,$args['args'],$args['publish']))
                throw new Exception($this->client->getErrorMessage());
         } else if($args['function'] == "wp.setOptions") {
@@ -50,7 +56,7 @@ class RemotePost extends SupraCsvPlugin {
     public function postContent($content) {
 
         $args = array(
-                      'function'=>'metaWeblog.newPost',
+                      'function'=>'wp.newPost',
                       'args'    =>$content, 
                      );
 
@@ -83,16 +89,15 @@ class RemotePost extends SupraCsvPlugin {
         return $response;
     }
 
-
     public function injectListing($args) {
 
-        foreach($args['meta'] as $k=>$v) {
-            $meta[] = array('key'=>$k,'value'=>$v);
+        foreach($args['custom_fields'] as $k=>$v) {
+            $custom_fields[] = array('key'=>$k,'value'=>$v);
         }
 
         $post = get_option('scsv_post');
 
-        $params = array('title','type','desc');
+        $params = array('post_title','post_type','post_content','terms_names','terms');
     
         foreach($params as $param) {
             if(empty($args[$param]))
@@ -102,17 +107,27 @@ class RemotePost extends SupraCsvPlugin {
         }
 
         $content = array(
-                         'description'=>$desc,
-                         'post_type'=>$type,
-                         'title'=>$title,
-                         'custom_fields'=>$meta);
-     
+                         'post_content'=>$post_content,
+                         'post_type'=>$post_type,
+                         'post_title'=>$post_title,
+                         'terms_names'=>$terms_names,
+                         'terms'=>$terms,
+                         'custom_fields'=>$custom_fields
+                        );
+
+        if($post['publish'])
+            $content['post_status'] = 'publish';
+        else
+            $content['post_status'] = 'pending';
+
+
         try {
-            return $this->postContent($content);
+            $success = $this->postContent($content);
         } catch( Exception $e ) {
             echo '<span class="error">'.$e->getMessage().'</span>';
-            return false;
+            $success = false;;
         }
-
+         
+        return $success;
     }
 }

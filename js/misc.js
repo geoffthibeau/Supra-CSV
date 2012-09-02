@@ -32,7 +32,7 @@ $(function() {
     $('#select_csv_file').live('change', function() {
         filename_key = $(this).val();
 
-        if(key) {
+        if(filename_key) {
           $.ajax({
             type: 'POST',
             data: {'action':'supra_csv','command':'select_ingest_file','args':filename_key},

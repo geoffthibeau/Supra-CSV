@@ -22,10 +22,10 @@ class SupraCsvPlugin {
     }
 
     public function getCsvDir() {
-        return WP_PLUGIN_DIR . '/' . $this->plugin_name .'/'. 'csv' . '/';
+        return WP_CONTENT_DIR . '/uploads/' . $this->plugin_name .'/'. 'csv' . '/';
     }
 
     public function getCsvDirUrl() {
-        return $this->getPluginDirUrl() . 'csv' . '/';
+        return WP_CONTENT_URL . '/uploads/' . $this->plugin_name .'/'. 'csv' . '/';
     }
 }

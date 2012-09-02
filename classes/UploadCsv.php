@@ -2,7 +2,7 @@
 require_once(dirname(__FILE__).'/SupraCsvPlugin.php');
 class UploadCsv extends SupraCsvPlugin {
 
-    private $mimes   = array("text/csv","text/comma-separated-values");
+    private $mimes   = array("text/csv","text/comma-separated-values",'application/vnd.ms-excel','text/plain','text/tsv');
     private $success = false;
     private $error;
     private $preview_num = 10;
@@ -12,6 +12,12 @@ class UploadCsv extends SupraCsvPlugin {
 
         if(!empty($file['uploaded'])) {
             $this->processFile($file['uploaded']);
+        }
+
+        if(!file_exists($this->getCsvDir())) {
+            chmod(WP_CONTENT_DIR . '/uploads/',0777);
+            mkdir($this->getCsvDir(),0777,true);
+            chmod(WP_CONTENT_DIR . '/uploads/',0744);
         }
     }
 
@@ -105,15 +111,19 @@ class UploadCsv extends SupraCsvPlugin {
     }
 
     function downloadFile($file) {
-        $filename= $this->getCsvDirUrl() . $file;
+        $filename_abs = $this->getCsvDir() . $file;
+        $filename_url = $this->getCsvDirUrl() . $file;
 	echo '<b>(showing First '.$this->preview_num.' lines)</b> or ' .
-             '<a href="'.$filename.'" target="_blank">Download File</a>';
+             '<a href="'.$filename_url.'" target="_blank">Download File</a>';
         $row = 1;
-        if (($handle = fopen($filename, "r")) !== FALSE) {
-            while(($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+        $csv_settings = get_option('scsv_csv_settings');
+
+        if (($handle = fopen($filename_abs, "r")) !== FALSE) {
+
+            while (($data = fgetcsv($handle,1000,stripslashes($csv_settings['delimiter']),stripslashes($csv_settings['enclosure']),stripslashes($csv_settings['escape']))) !== FALSE) {
                 echo "<br />";
                 $row++;
-                    echo implode(',',$data);
+                    echo implode(stripslashes($csv_settings['delimiter']),$data);
                 if($row==10) break;
             }
             fclose($handle);

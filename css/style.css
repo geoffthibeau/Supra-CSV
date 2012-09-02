@@ -32,3 +32,17 @@ span.success {
 span.error {
     color: red;
 }
+
+#postmeta_suggestions td {
+    border: 1px solid #000;
+    padding: 10px; 
+}
+
+#postmeta_suggestions .even {
+    background-color: #EEE;
+}
+
+#postmeta_suggestions .odd {
+    background-color: #F9F9F9;
+}
+

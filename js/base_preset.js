@@ -12,6 +12,7 @@ var presetCreateResponse = function(preset) {
 
               options[options.length] = new Option(preset.name,preset.id);
               $(select).val(preset.id);
+              $(select).trigger('change');
               $('#flash').html(preset.msg);
 }
 
@@ -23,6 +24,7 @@ var presetUpdateResponse = function(preset) {
               });
 
               $('#select_' + preset_type + '_preset').val(preset_id);
+              $('#select_' + preset_type + '_preset').trigger('change');
               $('#flash').html(preset.msg);
 }
 

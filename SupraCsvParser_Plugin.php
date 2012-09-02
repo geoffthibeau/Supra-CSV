@@ -96,9 +96,9 @@ class SupraCsvParser_Plugin extends SupraCsvParser_LifeCycle {
     public function callAdminActions() {
         add_menu_page("Supra CSV", "Supra CSV", "manage_options", "supra_csv", array(&$this,"scsv_admin"));
         add_submenu_page("supra_csv", "Configuration", "Configuration", "manage_options", "supra_csv", array(&$this,"scsv_admin"));
+        add_submenu_page("supra_csv", "Upload", "Upload", "manage_options", "supra_csv_upload", array(&$this,"scsv_upload"));
         add_submenu_page("supra_csv", "Post Info", "Post Info", "manage_options", "supra_csv_postmeta", array(&$this,"scsv_postmeta"));
         add_submenu_page("supra_csv", "Ingestion", "Ingestion", "manage_options", "supra_csv_ingest", array(&$this,"scsv_ingest"));
-        add_submenu_page("supra_csv", "Upload", "Upload", "manage_options", "supra_csv_upload", array(&$this,"scsv_upload"));
     }
 
     public function supraCsvAjax() {

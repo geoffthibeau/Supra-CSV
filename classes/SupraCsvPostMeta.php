@@ -45,5 +45,17 @@ EOF;
         return $form;
 
     }
+
+    public function getSuggestions($post_type) {
+        global $wpdb;
+
+        $sql = "SELECT pm.meta_key, pm.`meta_value`
+                FROM wp_postmeta AS pm
+                LEFT JOIN wp_posts AS p ON p.ID = pm.post_id
+                WHERE p.post_type =  '$post_type'
+                GROUP BY pm.meta_key";
+
+        return $wpdb->get_results($sql,OBJECT);
+    }
 }
 

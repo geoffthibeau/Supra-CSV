@@ -62,8 +62,10 @@ class SupraCsvParser extends SupraCsvPlugin {
 
         //die();
 
+        $csv_settings = get_option('scsv_csv_settings');
+
         if($cols) {
-            while (($data = fgetcsv($this->handle)) !== FALSE) {
+            while (($data = fgetcsv($this->handle,0,$csv_settings['delimiter'],$csv_settings['enclosure'],$csv_settings['escape'])) !== FALSE) {
 
                 //loop through the columns
                 foreach($data as $i=>$d) {
@@ -75,15 +77,83 @@ class SupraCsvParser extends SupraCsvPlugin {
                 if(strstr(site_url(),'3dmpekg')) 
                     $row = $this->patchByRow($row);
 
-                $title = $row['post_title'];
-                $desc =  $row['post_content'];
+                $csvpost = get_option('scsv_post');
+
+                $post_title = $row['post_title'];
+                $post_content =  $row['post_content'];
+                
+                $parse_terms = get_option('scsv_parse_terms');
+                
+                $wp_parse_cats = false;
+
+                $wp_terms = array();
+
+                if($parse_terms) {
+                    $fields = array('term_name','term_slug','term_parent','term_description');
+                    foreach($fields as $field) 
+                        if(!empty($row[$field]))
+                            $$field = $row[$field];
+                    $wp_parse_cats = compact('term_name','term_slug','term_parent','term_description');
+                    foreach($fields as $field)
+                        unset($row[$field]);
+                    if(count($wp_parse_cats))
+                        $wp_terms['category'][] = $wp_parse_cats;
+                }
+
+                $post_terms = array();
+                $term_names = array();
+                $terms = array();
+
+                $custom_terms = get_option('scsv_custom_terms');
+
+                if(!empty($custom_terms))
+                    $post_terms = explode(',',get_option('scsv_custom_terms'));
+
+                //parse the cutom term to its taxonomy
+                foreach((array)$post_terms as $pt) {
+                    $wp_terms[$pt] = explode('|', $row['terms_'.$pt]);
+                }
+
+                //categories must be resolved by terms
+                if(!empty( $row['categories'] )) {
+                    if($wp_parse_cats) die('<span class="error">You must either parse complexy or simplistic categoires but not both.</span>');
+                    $wp_terms['category'] = explode('|', $row['categories']);
+                }
+
+                //keywords must be resolved by terms
+                if(!empty( $row['mt_keywords'] )) 
+                    $wp_terms['post_tag'] = explode('|', $row['mt_keywords']);
+
+                foreach((array)$wp_terms as $k=>$v) {
+                    if(is_int($v[0]))
+                        $terms[$k] = $v;
+                    else
+                        $terms_names[$k] = $v;
+                }
+
+                //these unsetters confine the array to custom_fields
+                foreach((array)$post_terms as $pt) {
+                    unset($row['terms_'.$pt]);
+                }
+
                 unset($row['post_title']);
                 unset($row['post_content']);
+                unset($row['categories']);
+                unset($row['mt_keywords']);
 
-                if($rp->injectListing(array('title'=>$title,'desc'=>$desc,'meta'=>$row)))
-                    echo '<span class="success">Successfully ingested '. $title . '</span><br />';
+                $post_args = array(
+                                   'post_title'=>$post_title,
+                                   'post_content'=>$post_content,
+                                   'post_type'=>$csvpost['type'],
+                                   'terms_names'=>$terms_names,
+                                   'terms'=>$terms,
+                                   'custom_fields'=>$row
+                                  );
+
+                if($rp->injectListing($post_args))
+                    echo '<span class="success">Successfully ingested '. $post_title . '</span><br />';
                 else
-                    echo '<span class="error">Problem Ingesting '. $title . '</span><br />';
+                    echo '<span class="error">Problem Ingesting '. $post_title . '</span><br />';
             }
         }
 
@@ -144,6 +214,7 @@ class SupraCsvMapperForm {
     private $rows;
     private $listing_fields;
 
+    private $predefined_meta = array('post_title'=>'Title','post_content'=>'Description','category'=>'Categories','post_tag'=>'Tags');
 
     function __construct(SupraCsvParser $cp) {
         $rows = $cp->getColumns();
@@ -153,6 +224,10 @@ class SupraCsvMapperForm {
 
         $this->rows = $rows;
         $this->setListingFields();
+
+        $csvpost = get_option('scsv_post');
+        $post_type = $csvpost['type'];
+        $this->post_type_taxonomies = get_object_taxonomies( $post_type, 'objects' );
     }
 
     public function setListingFields() {
@@ -172,15 +247,17 @@ class SupraCsvMapperForm {
     }
 
     private function displayListingFields() {
-
         $inputs = null;
 
-        foreach((array)$this->getListingFields() as $k=>$v) {
+        $fields = $this->getListingFields();
 
-            $inputs .= self::createInput($k,$v,$this->rows);
+        if(count($fields) == 1 && !empty($fields[0]) || count($fields) > 1) {
 
+            $inputs .= '<h3>Custom Postmeta</h3>'; 
+            foreach((array)$this->getListingFields() as $k=>$v) {
+                $inputs .= self::createInput($k,$v,$this->rows);
+            }
         }
-
         return $inputs;
     }
 
@@ -201,8 +278,38 @@ class SupraCsvMapperForm {
 
     public function getForm() {
 
-        $inputs .= self::createInput('post_title','Title',$this->rows);
-        $inputs .= self::createInput('post_content','Description',$this->rows);
+        $inputs .= '<h3>Predefined</h3>'; 
+
+        foreach($this->predefined_meta as $k=>$v) {
+            if( array_key_exists($k,$this->post_type_taxonomies) || $k == 'post_title' || $k == 'post_content' )
+                $inputs .= self::createInput($k,$v,$this->rows);
+        }
+
+        $parse_terms = get_option('scsv_parse_terms');
+        $custom_terms = get_option('scsv_custom_terms');
+
+        if($parse_terms || !empty($custom_terms))
+              $inputs .= '<h3>Custom Terms</h3>'; 
+
+
+        
+        if($parse_terms) {
+              if ( array_key_exists( 'category' , $this->post_type_taxonomies ) ) {
+                  $inputs .= self::createInput('term_name','Term Name',$this->rows);
+                  $inputs .= self::createInput('term_slug','Term Slug',$this->rows);
+                  $inputs .= self::createInput('term_parent','Term Parent',$this->rows);
+                  $inputs .= self::createInput('term_description','Term Description',$this->rows);
+              }
+        } 
+
+        if(!empty($custom_terms)) {
+              $post_terms = explode(',',get_option('scsv_custom_terms'));
+
+              foreach($post_terms as $post_term) {
+                  if ( array_key_exists( $post_term , $this->post_type_taxonomies ) )
+                      $inputs .= self::createInput('terms_'.$post_term,$post_term,$this->rows);
+              }
+        } 
 
         $inputs .= $this->displayListingFields();
 
