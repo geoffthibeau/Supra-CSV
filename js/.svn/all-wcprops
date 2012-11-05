@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/!svn/ver/599050/supra-csv-parser/trunk/js
+END
+misc.js
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/!svn/ver/585274/supra-csv-parser/trunk/js/misc.js
+END
+base_preset.js
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/!svn/ver/591785/supra-csv-parser/trunk/js/base_preset.js
+END
+mapping_preset.js
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/!svn/ver/585274/supra-csv-parser/trunk/js/mapping_preset.js
+END
+postmeta_preset.js
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/!svn/ver/585274/supra-csv-parser/trunk/js/postmeta_preset.js
+END
+global.js
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/!svn/ver/585274/supra-csv-parser/trunk/js/global.js
+END
+export.js
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/!svn/ver/599050/supra-csv-parser/trunk/js/export.js
+END
+inputCloner.js
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/!svn/ver/585274/supra-csv-parser/trunk/js/inputCloner.js
+END

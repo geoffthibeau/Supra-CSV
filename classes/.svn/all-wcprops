@@ -1,0 +1,95 @@
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/!svn/ver/604376/supra-csv-parser/trunk/classes
+END
+SupraCsvDBAL.php
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/!svn/ver/585274/supra-csv-parser/trunk/classes/SupraCsvDBAL.php
+END
+UploadCsv.php
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/!svn/ver/593914/supra-csv-parser/trunk/classes/UploadCsv.php
+END
+test2.php
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/!svn/ver/599050/supra-csv-parser/trunk/classes/test2.php
+END
+RemotePost.php
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/!svn/ver/593793/supra-csv-parser/trunk/classes/RemotePost.php
+END
+SupraCsvExtractor.php
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/599050/supra-csv-parser/trunk/classes/SupraCsvExtractor.php
+END
+error_log
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/!svn/ver/599050/supra-csv-parser/trunk/classes/error_log
+END
+IngestCsv.php
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/!svn/ver/585274/supra-csv-parser/trunk/classes/IngestCsv.php
+END
+SupraCsvAjaxHandler.php
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/599050/supra-csv-parser/trunk/classes/SupraCsvAjaxHandler.php
+END
+SupraCsvPostTaxonomy.php
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/!svn/ver/593542/supra-csv-parser/trunk/classes/SupraCsvPostTaxonomy.php
+END
+SupraCsvDB.php
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/!svn/ver/585274/supra-csv-parser/trunk/classes/SupraCsvDB.php
+END
+CsvLib.php
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/!svn/ver/604376/supra-csv-parser/trunk/classes/CsvLib.php
+END
+SupraCsvPostMeta.php
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/585274/supra-csv-parser/trunk/classes/SupraCsvPostMeta.php
+END
+SupraCsvPlugin.php
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/599583/supra-csv-parser/trunk/classes/SupraCsvPlugin.php
+END
+Presets.php
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/!svn/ver/585274/supra-csv-parser/trunk/classes/Presets.php
+END
+Debug.php
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/!svn/ver/593539/supra-csv-parser/trunk/classes/Debug.php
+END
