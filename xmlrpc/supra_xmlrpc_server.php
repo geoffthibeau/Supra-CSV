@@ -191,7 +191,7 @@ class wp_xmlrpc_server extends IXR_Server {
 	 * @return mixed WP_User object if authentication passed, false otherwise
 	 */
 	function login($username, $password) {
-		iif ( !get_option( 'enable_xmlrpc' ) && get_bloginfo('version') < 3.5 ) {
+		if ( !get_option( 'enable_xmlrpc' ) && get_bloginfo('version') < 3.5 ) {
 			$this->error = new IXR_Error( 405, sprintf( __( 'XML-RPC services are disabled on this site. An admin user can enable them at %s'),  admin_url('options-writing.php') ) );
 			return false;
 		}
